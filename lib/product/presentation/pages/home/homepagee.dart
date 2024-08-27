@@ -3,25 +3,23 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../bloc/product_bloc.dart';
 import '../../bloc/product_event.dart';
+import '../../bloc/product_state.dart';
 import '../common/productcardd.dart';
 
 class Homepagee extends StatefulWidget {
-  
   const Homepagee({super.key});
+
   @override
   State<Homepagee> createState() => _HomePageState();
 }
 
-  class  _HomePageState extends State<Homepagee> {
+class _HomePageState extends State<Homepagee> {
   @override
   void initState() {
-
     // Fetch products when the page is initialized
-   // final productBloc = BlocProvider.of<ProductBloc>(context);
     context.read<ProductBloc>().add(GetAllProductsEvent());
     super.initState();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +30,7 @@ class Homepagee extends StatefulWidget {
         leading: const Padding(
           padding: EdgeInsets.all(8.0),
           child: CircleAvatar(
-            backgroundImage: NetworkImage('assets/profile.png '),
+            backgroundImage: AssetImage('assets/profile.png'), // Corrected to AssetImage
           ),
         ),
         title: const Row(
@@ -71,22 +69,37 @@ class Homepagee extends StatefulWidget {
             ),
             const SizedBox(height: 20),
             Expanded(
-              child: GridView.builder(
-                itemCount: 8, 
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 16,
-                  mainAxisSpacing: 16,
-                  childAspectRatio: 0.7,
-                ),
-                itemBuilder: (context, index) {
-                  return const ProductCard(
-                    productImage: 'assets/shoes.png ',
-                    productName: 'wow burger',
-                    productPrice: '£ 10.00',
-                    productOldPrice: '£ 12.00',
-                    productRating: '4.9',
-                  );
+              child: BlocBuilder<ProductBloc, ProductState>(
+                builder: (context, state) {
+                  if (state is GetAllProductsLoading) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (state is GetAllProductsError) {
+                    return Center(child: Text(state.message));
+                  } else if (state is GetAllProductsSuccess) {
+                    final products = state.products;
+                    
+                    return GridView.builder(
+                      itemCount: products.length,
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        crossAxisSpacing: 16,
+                        mainAxisSpacing: 16,
+                        childAspectRatio: 0.7,
+                      ),
+                      itemBuilder: (context, index) {
+                        final product = products[index];
+                        return ProductCard(
+                          productImage: product.imageUrl, // Assuming imageUrl is the correct field
+                          productName: product.title,
+                          productPrice: '£${product.price}',
+                          productOldPrice: '£${product.discount}', // Assuming discount represents old price
+                          productRating: product.rating.toString(),
+                        );
+                      },
+                    );
+                  } else {
+                    return const Center(child: Text('No products found.'));
+                  }
                 },
               ),
             ),

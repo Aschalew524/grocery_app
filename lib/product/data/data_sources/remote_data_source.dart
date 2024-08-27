@@ -13,13 +13,10 @@ abstract class ProductRemoteDataSource {
 
   getAllProducts() {}
 }
-
 class ProductRemoteDataSourceImpl extends ProductRemoteDataSource {
   final http.Client client;
+
   ProductRemoteDataSourceImpl({required this.client});
-
-
- 
 
   @override
   Future<ProductModel> getProduct(String productId) async {
@@ -32,25 +29,26 @@ class ProductRemoteDataSourceImpl extends ProductRemoteDataSource {
     }
   }
 
- 
   @override
-Future<List<ProductModel>> getAllProducts() async {
-  final response = await client.get(Uri.parse(Urls.getAllProducts()));
+  Future<List<ProductModel>> getAllProducts() async {
+    final response = await client.get(Uri.parse(Urls.getAllProducts()));
 
-  if (response.statusCode == 200) {
-    print('Response Body: ${response.body}');
-    final data = json.decode(response.body);
+    if (response.statusCode == 200) {
+      print('Response Body: ${response.body}');
+      final data = json.decode(response.body);
 
-
-    if (data is Map<String, dynamic> && data.containsKey('data')) {
-      final productList = data['data'] as List<dynamic>;
-      return productList.map((json) => ProductModel.fromJson(json)).toList();
+      if (data is Map<String, dynamic> && data.containsKey('data')) {
+        final productList = data['data'] as List<dynamic>;
+        print('Parsed Products: $productList'); // Debug print to inspect the list
+        return productList.map((json) => ProductModel.fromJson(json)).toList();
+      } else {
+        throw ServerException();
+      }
     } else {
       throw ServerException();
     }
-  } else {
-    throw ServerException();
   }
-}
 
+
+  
 }

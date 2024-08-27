@@ -4,7 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'injection_container.dart' as di;
 import 'product/presentation/bloc/product_bloc.dart';
 import 'product/presentation/pages/detail/detail_page.dart';
-import 'product/presentation/pages/home/homepagee.dart'; 
+import 'product/presentation/pages/home/homepagee.dart';
+import 'product/presentation/splash_screen/splashScreen.dart'; 
 
 
 
@@ -32,10 +33,11 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        initialRoute: '/home',
+        initialRoute: '/splash',
         routes: {
           '/home': (context) => const Homepagee(),
-          '/detail': (context) => DetailPage(),          
+          '/detail': (context) => DetailPage(),   
+          '/splash': (context) => const SplashScreen(),      
         },
         title: 'Product',
         theme: ThemeData(

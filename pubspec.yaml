@@ -88,6 +88,7 @@ flutter:
      - assets/shoes.png
      - assets/profile.png
      - assets/burger.jpg 
+     - assets/burgerr.jpg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
